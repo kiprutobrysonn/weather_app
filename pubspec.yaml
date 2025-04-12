@@ -69,3 +69,5 @@ flutter:
   assets:
     - assets/png/
     - assets/jpg/
+
+  generate: true
