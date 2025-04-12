@@ -1,0 +1,3 @@
+class HiveStorageKeys {
+  HiveStorageKeys._();
+}
