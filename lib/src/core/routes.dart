@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/src/features/home_page/presentation/screens/bloc/settings_bloc.dart';
+import 'package:weather_app/src/features/home_page/presentation/screens/settings.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // Add your route generation logic here
     switch (settings.name) {
+      case SettingsPage.routeName:
+        return _registerBlocView(
+          view: const SettingsPage(),
+          bloc: SettingsBloc()..add(InitSettingsEvent()),
+          settings: settings,
+        );
       default:
         return _errorRoute(settings.name);
     }

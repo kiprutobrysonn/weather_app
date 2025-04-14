@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:weather_app/src/core/locator.dart';
+import 'package:weather_app/src/features/home_page/presentation/screens/settings_controller.dart';
 
 import 'src/app.dart';
 
@@ -33,8 +34,9 @@ void main() async {
       }
 
       SystemChannels.textInput.invokeMapMethod('TextInput.hide');
-
-      runApp(MyApp());
+      final settingsController = locator<SettingsController>();
+      await settingsController.loadSettings();
+      runApp(MyApp(settingsController: settingsController));
     },
     (error, stack) {
       // Implement proper error reporting here

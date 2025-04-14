@@ -2,10 +2,9 @@ import 'package:equatable/equatable.dart';
 
 class ApiResponse<T> extends Equatable {
   final T? data;
-  final String? message;
   final bool? status;
 
-  ApiResponse({this.data, this.message, this.status});
+  ApiResponse({this.data, this.status});
 
   @override
   // TODO: implement props

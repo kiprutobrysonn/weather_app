@@ -1,6 +1,6 @@
 class HiveBoxNames {
   HiveBoxNames._();
 
-  static const generalAppBox = 'general_app_box';
-  static const userBox = 'user_box';
+  static const generalAppBox = 'settings_box';
+  static const locationsBox = 'locations_box';
 }
