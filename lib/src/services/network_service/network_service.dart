@@ -30,31 +30,6 @@ class NetworkService extends INetworkService {
       NetworkLoggerInterceptor(),
     ]);
   }
-  @override
-  Future<ApiResponse<Map<String, dynamic>>> delete(
-    String url, {
-    body,
-    Map<String, String>? headers,
-  }) async {
-    try {
-      if (headers != null) {
-        _headers.addAll(headers);
-      }
-      final res = await _dio.delete(
-        url,
-        data: body,
-        options: Options(headers: _headers),
-      );
-
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(data: res.data, message: res.statusMessage);
-      }
-      throw Failure(res.statusMessage ?? "Something went wrong");
-    } catch (e) {
-      _logger.e(e.toString());
-      throw Failure(e.toString());
-    }
-  }
 
   @override
   Future<ApiResponse<Map<String, dynamic>>> get(
@@ -68,114 +43,12 @@ class NetworkService extends INetworkService {
         _headers.addAll(headers);
       }
       final res = await _dio.get(url, options: Options(headers: _headers));
+
       if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(data: res.data, message: res.statusMessage);
+        return ApiResponse(data: res.data, status: true);
       }
       throw Failure(res.statusMessage ?? "Something went wrong");
     } on DioException catch (e) {
-      throw convertException(e);
-    } catch (e) {
-      _logger.e(e.toString());
-      throw Failure(e.toString());
-    }
-  }
-
-  @override
-  Future<ApiResponse<Map<String, dynamic>>> post(
-    String url, {
-    Map<String, String>? headers,
-    Map<String, dynamic>? body,
-  }) async {
-    _logger.i("POST $url");
-    try {
-      if (headers != null) {
-        _headers.addAll(headers);
-      }
-      _logger.i("Set body: $body");
-      final res = await _dio.post(
-        url,
-        data: body,
-        options: Options(headers: _headers),
-      );
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(data: res.data, message: res.statusMessage);
-      }
-      throw Failure(
-        res.statusMessage ?? "Something went wrong",
-        extraData: res.toString(),
-      );
-    } on DioException catch (e) {
-      _logger.e(e.toString());
-      throw convertException(e);
-    } catch (e) {
-      _logger.e(e.toString());
-      throw Failure(e.toString());
-    }
-  }
-
-  @override
-  Future<ApiResponse<Map<String, dynamic>>> postFile(
-    String url,
-    String key,
-    File file, {
-    Map<String, String>? headers,
-  }) async {
-    try {
-      if (headers != null) {
-        _headers.addAll(headers);
-      }
-      _logger.i("POST $url");
-
-      String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        key: await MultipartFile.fromFile(file.path, filename: fileName),
-      });
-      final res = await _dio.post(
-        url,
-        data: formData,
-        options: Options(headers: _headers),
-      );
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(data: res.data, message: res.statusMessage);
-      }
-      throw Failure(
-        res.statusMessage ?? "Something went wrong",
-        extraData: res.toString(),
-      );
-    } on DioException catch (e) {
-      _logger.e(e.toString());
-      throw convertException(e);
-    } catch (e) {
-      _logger.e(e.toString());
-      throw Failure(e.toString());
-    }
-  }
-
-  @override
-  Future<ApiResponse<Map<String, dynamic>>> put(
-    String url, {
-    body,
-    Map<String, String>? headers,
-  }) async {
-    try {
-      if (headers != null) {
-        _headers.addAll(headers);
-      }
-      _logger.i("Set body: $body");
-      final res = await _dio.put(
-        url,
-        data: body,
-        options: Options(headers: _headers),
-      );
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(data: res.data, message: res.statusMessage);
-      }
-      throw Failure(
-        res.statusMessage ?? "Something went wrong",
-        extraData: res.toString(),
-      );
-    } on DioException catch (e) {
-      _logger.e(e.toString());
       throw convertException(e);
     } catch (e) {
       _logger.e(e.toString());
@@ -207,76 +80,28 @@ class NetworkService extends INetworkService {
   }
 
   @override
-  Future<ApiResponse<Map<String, dynamic>>> patch(
+  Future<ApiResponse<Map<String, dynamic>>> getWithQuery(
     String url, {
-    body,
     Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
   }) async {
+    // TODO: implement getWithQuery
+
+    _logger.i("GET $url");
     try {
       if (headers != null) {
         _headers.addAll(headers);
       }
-      _logger.i("Set body: $body");
-      final res = await _dio.patch(
+      final res = await _dio.get(
         url,
-        data: FormData.fromMap(body),
         options: Options(headers: _headers),
+        queryParameters: queryParameters,
       );
       if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(
-          data: res.data,
-          message: res.statusMessage,
-          status: true,
-        );
+        return ApiResponse(data: res.data, status: true);
       }
-      throw Failure(
-        res.statusMessage ?? "Something went wrong",
-        extraData: res.toString(),
-      );
+      throw Failure(res.statusMessage ?? "Something went wrong");
     } on DioException catch (e) {
-      _logger.e(e.toString());
-      throw convertException(e);
-    } catch (e) {
-      _logger.e(e.toString());
-      throw Failure(e.toString());
-    }
-  }
-
-  @override
-  Future<ApiResponse<Map<String, dynamic>>> patchWithFile(
-    String url,
-    String key,
-    File file, {
-    Map<String, String>? headers,
-  }) async {
-    try {
-      if (headers != null) {
-        _headers.addAll(headers);
-      }
-      _logger.i("PATCH $url with file");
-
-      String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
-        key: await MultipartFile.fromFile(file.path, filename: fileName),
-      });
-      final res = await _dio.patch(
-        url,
-        data: formData,
-        options: Options(headers: _headers),
-      );
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        return ApiResponse(
-          data: res.data,
-          message: res.statusMessage,
-          status: true,
-        );
-      }
-      throw Failure(
-        res.statusMessage ?? "Something went wrong",
-        extraData: res.toString(),
-      );
-    } on DioException catch (e) {
-      _logger.e(e.toString());
       throw convertException(e);
     } catch (e) {
       _logger.e(e.toString());
@@ -290,40 +115,10 @@ abstract class INetworkService {
     String url, {
     Map<String, String>? headers,
   });
-  Future<ApiResponse<Map<String, dynamic>>> post(
+
+  Future<ApiResponse<Map<String, dynamic>>> getWithQuery(
     String url, {
     Map<String, String>? headers,
-    Map<String, dynamic>? body,
-  });
-
-  Future<ApiResponse<Map<String, dynamic>>> put(
-    String url, {
-    dynamic body,
-    Map<String, String>? headers,
-  });
-
-  Future<ApiResponse<Map<String, dynamic>>> delete(
-    String url, {
-    dynamic body,
-    Map<String, String>? headers,
-  });
-  Future<ApiResponse<Map<String, dynamic>>> postFile(
-    String url,
-    String key,
-    File file, {
-    Map<String, String>? headers,
-  });
-
-  Future<ApiResponse<Map<String, dynamic>>> patch(
-    String url, {
-    dynamic body,
-    Map<String, String>? headers,
-  });
-
-  Future<ApiResponse<Map<String, dynamic>>> patchWithFile(
-    String url,
-    String key,
-    File file, {
-    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
   });
 }
