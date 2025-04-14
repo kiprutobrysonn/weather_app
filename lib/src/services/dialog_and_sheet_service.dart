@@ -7,23 +7,25 @@ class DialogAndSheetService extends IDialogAndSheetService {
 
   @override
   Future<T?> showAppBottomSheet<T>(Widget child) async {
-    return showModalBottomSheet(
+    return showModalBottomSheet<T>(
       context: key.currentContext!,
       enableDrag: true,
       isScrollControlled: true,
-      elevation: 0,
-      isDismissible: true,
+      backgroundColor: Colors.transparent,
       useRootNavigator: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) => child,
+      isDismissible: true,
+      builder:
+          (context) => DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            maxChildSize: 0.9,
+            minChildSize: 0.5,
+            builder: (context, scrollController) => child,
+          ),
     );
   }
 
   @override
   Future<T?> showAppDialog<T>(Widget child) async {
-    // TODO: implement showAppDialog
     return showDialog(
       context: key.currentContext!,
       useSafeArea: true,
