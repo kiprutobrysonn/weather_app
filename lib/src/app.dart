@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:weather_app/src/core/app_theme.dart';
 import 'package:weather_app/src/core/routes.dart';
 import 'package:weather_app/src/features/home_page/presentation/bloc/home_bloc.dart';
+import 'package:weather_app/src/features/home_page/presentation/cubit/location_search_cubit.dart';
 import 'package:weather_app/src/features/home_page/presentation/home_page.dart';
 import 'package:weather_app/src/features/home_page/presentation/screens/bloc/settings_bloc.dart';
 import 'package:weather_app/src/features/home_page/presentation/screens/settings_controller.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key, required this.settingsController});
-
   final SettingsController settingsController;
 
   @override
@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       listenable: widget.settingsController,
       builder: (context, child) {
         return ScreenUtilInit(
-          designSize: Size(430, 932),
+          designSize: const Size(430, 932),
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             scaffoldMessengerKey: NavigationService.snackbarkey,
@@ -39,7 +39,6 @@ class _MyAppState extends State<MyApp> {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: const [Locale('en', '')],
-
             theme: AppTheme.themeData(Brightness.light),
             darkTheme: AppTheme.themeData(Brightness.dark),
             themeMode: ThemeMode.light,
@@ -52,8 +51,11 @@ class _MyAppState extends State<MyApp> {
                 BlocProvider<HomeBloc>(
                   create: (context) => HomeBloc()..add(HomeInitEvent()),
                 ),
+                BlocProvider<LocationSearchCubit>(
+                  create: (context) => LocationSearchCubit(),
+                ),
               ],
-              child: HomePage(),
+              child: const HomePage(),
             ),
           ),
         );

@@ -25,52 +25,30 @@ class HomeLoaded extends HomeState {
   final Map<String, dynamic> weatherData;
   final ForecastDto? forecast;
   final SavedLocation? locationDetails;
-  final List<SavedLocation>? savedLocations;
 
   const HomeLoaded(
     this.position,
     this.weatherData,
     this.forecast, {
     this.locationDetails,
-    this.savedLocations,
   });
 
   HomeLoaded copyWith({
     Position? position,
     Map<String, dynamic>? weatherData,
     ForecastDto? forecast,
-    List<SavedLocation>? savedLocations,
-    SavedLocation? locationdetails,
+    SavedLocation? locationDetails,
   }) {
     return HomeLoaded(
       position ?? this.position,
       weatherData ?? this.weatherData,
       forecast ?? this.forecast,
-      savedLocations: savedLocations ?? this.savedLocations,
-      locationDetails: locationdetails,
+      locationDetails: locationDetails ?? this.locationDetails,
     );
   }
 
   @override
-  List<Object?> get props => [position, weatherData, forecast, savedLocations];
-}
-
-class LocationsLoaded extends HomeState {
-  final List<SavedLocation> locations;
-
-  const LocationsLoaded(this.locations);
-
-  @override
-  List<Object> get props => [locations];
-}
-
-class LocationSearchError extends HomeState {
-  final String message;
-
-  const LocationSearchError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  List<Object?> get props => [position, weatherData, forecast, locationDetails];
 }
 
 class ForecastLoading extends HomeState {
