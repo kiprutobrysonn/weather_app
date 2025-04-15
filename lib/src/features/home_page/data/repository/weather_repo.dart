@@ -24,13 +24,10 @@ class WeatherRepo implements IWeatherRepo {
     }
 
     try {
-      // Use geocoding package instead of the custom remote service
       final locations = await locationFromAddress(query);
 
-      // Convert geocoding results to LocationDto objects
       final locationDtos = await Future.wait(
         locations.map((location) async {
-          // Get place name details for the found coordinates
           final placemarks = await placemarkFromCoordinates(
             location.latitude,
             location.longitude,
@@ -61,6 +58,15 @@ class WeatherRepo implements IWeatherRepo {
     final res = await _weatherRemote.getForecastWeather(params);
     return res.fold((l) => left(Failure(l.message)), (r) => right(r.data!));
   }
+
+  @override
+  Future<Either<Failure, String>> getAirQuality(
+    CurrentWeatherParams params,
+  ) async {
+    // TODO: implement getAirQuality
+    final res = await _weatherRemote.getAirQuality(params);
+    return res.fold((l) => left(Failure(l.message)), (r) => right(r));
+  }
 }
 
 abstract class IWeatherRepo {
@@ -71,4 +77,5 @@ abstract class IWeatherRepo {
   Future<Either<Failure, ForecastDto>> getForecastWeather(
     CurrentWeatherParams params,
   );
+  Future<Either<Failure, String>> getAirQuality(CurrentWeatherParams params);
 }

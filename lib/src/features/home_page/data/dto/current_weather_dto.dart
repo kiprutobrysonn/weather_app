@@ -7,7 +7,6 @@ class CurrentWeatherDto {
   final String timezone;
   final String timezoneAbbreviation;
   final double elevation;
-  final CurrentUnitsDto currentUnits;
   final CurrentDto current;
 
   CurrentWeatherDto({
@@ -18,7 +17,6 @@ class CurrentWeatherDto {
     required this.timezone,
     required this.timezoneAbbreviation,
     required this.elevation,
-    required this.currentUnits,
     required this.current,
   });
 
@@ -31,7 +29,6 @@ class CurrentWeatherDto {
       timezone: json['timezone'],
       timezoneAbbreviation: json['timezone_abbreviation'],
       elevation: json['elevation'],
-      currentUnits: CurrentUnitsDto.fromJson(json['current_units']),
       current: CurrentDto.fromJson(json['current']),
     );
   }
@@ -45,52 +42,7 @@ class CurrentWeatherDto {
       'timezone': timezone,
       'timezone_abbreviation': timezoneAbbreviation,
       'elevation': elevation,
-      'current_units': currentUnits.toJson(),
       'current': current.toJson(),
-    };
-  }
-}
-
-class CurrentUnitsDto {
-  final String time;
-  final String interval;
-  final String temperature2m;
-  final String precipitation;
-  final String weathercode;
-  final String isDay;
-  final String uvIndex;
-
-  CurrentUnitsDto({
-    required this.time,
-    required this.interval,
-    required this.temperature2m,
-    required this.precipitation,
-    required this.weathercode,
-    required this.isDay,
-    required this.uvIndex,
-  });
-
-  factory CurrentUnitsDto.fromJson(Map<String, dynamic> json) {
-    return CurrentUnitsDto(
-      time: json['time'],
-      interval: json['interval'],
-      temperature2m: json['temperature_2m'],
-      precipitation: json['precipitation'],
-      weathercode: json['weathercode'],
-      isDay: json['is_day'],
-      uvIndex: json['uv_index'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'time': time,
-      'interval': interval,
-      'temperature_2m': temperature2m,
-      'precipitation': precipitation,
-      'weathercode': weathercode,
-      'is_day': isDay,
-      'uv_index': uvIndex,
     };
   }
 }
@@ -103,6 +55,8 @@ class CurrentDto {
   final int weathercode;
   final bool isDay;
   final double uvIndex;
+  final double windSpeed10m;
+  final double apparentTemperature;
 
   CurrentDto({
     required this.time,
@@ -112,6 +66,8 @@ class CurrentDto {
     required this.weathercode,
     required this.isDay,
     required this.uvIndex,
+    this.windSpeed10m = 0.0,
+    required this.apparentTemperature,
   });
 
   factory CurrentDto.fromJson(Map<String, dynamic> json) {
@@ -123,6 +79,8 @@ class CurrentDto {
       weathercode: json['weathercode'],
       isDay: json['is_day'] == 1 ? true : false,
       uvIndex: json['uv_index'],
+      windSpeed10m: json['wind_speed_10m']?.toDouble() ?? 0.0,
+      apparentTemperature: json['apparent_temperature']?.toDouble(),
     );
   }
 
@@ -135,6 +93,8 @@ class CurrentDto {
       'weathercode': weathercode,
       'is_day': isDay,
       'uv_index': uvIndex,
+      'wind_speed_10m': windSpeed10m,
+      'feels_like': apparentTemperature,
     };
   }
 }
