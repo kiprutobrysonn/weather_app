@@ -49,7 +49,7 @@ class _SettingsPageView extends StatelessWidget {
           if (state is SettingsLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is SettingsLoaded) {
-            return _buildSettingsList(context, state);
+            return _settingsList(context, state);
           } else {
             return Center(child: Text('Failed to load settings'));
           }
@@ -58,12 +58,12 @@ class _SettingsPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsList(BuildContext context, SettingsLoaded state) {
+  Widget _settingsList(BuildContext context, SettingsLoaded state) {
     return ListView(
       padding: EdgeInsets.symmetric(vertical: 16.h),
       children: [
-        _buildSectionHeader('Temperature Units'),
-        _buildUnitSelector(
+        _sectionHeader('Temperature Units'),
+        _unitSelector(
           context: context,
           title: 'Temperature',
           options: ['Celcius', 'Fahrenheit'],
@@ -73,8 +73,8 @@ class _SettingsPageView extends StatelessWidget {
           },
         ),
         Divider(),
-        _buildSectionHeader('Precipitation Units'),
-        _buildUnitSelector(
+        _sectionHeader('Precipitation Units'),
+        _unitSelector(
           context: context,
           title: 'Precipitation',
           options: ['Millimeter', 'Inch'],
@@ -86,8 +86,8 @@ class _SettingsPageView extends StatelessWidget {
           },
         ),
         Divider(),
-        _buildSectionHeader('Wind Speed Units'),
-        _buildUnitSelector(
+        _sectionHeader('Wind Speed Units'),
+        _unitSelector(
           context: context,
           title: 'Wind Speed',
           options: windUnits.keys.toList(),
@@ -98,14 +98,14 @@ class _SettingsPageView extends StatelessWidget {
           },
         ),
         Divider(),
-        _buildSectionHeader('Other Units'),
-        _buildInfoCard(
+        _sectionHeader('Other Units'),
+        _infoCard(
           title: 'UV Index',
           description:
               'UV Index is always displayed as a unitless value from 0-11+',
         ),
         SizedBox(height: 8.h),
-        _buildInfoCard(
+        _infoCard(
           title: 'Cloud Cover',
           description: 'Cloud cover is always displayed as a percentage (%)',
         ),
@@ -115,7 +115,7 @@ class _SettingsPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _sectionHeader(String title) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Text(
@@ -129,7 +129,7 @@ class _SettingsPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildUnitSelector({
+  Widget _unitSelector({
     required BuildContext context,
     required String title,
     required List<String> options,
@@ -179,7 +179,7 @@ class _SettingsPageView extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard({required String title, required String description}) {
+  Widget _infoCard({required String title, required String description}) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(12.w),
