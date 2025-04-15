@@ -88,7 +88,6 @@ class WeatherUtils {
     }
   }
 
-  /// Get UV index description
   static String getUVIndexDescription(dynamic uvIndex) {
     if (uvIndex == null) return "N/A";
 
@@ -110,7 +109,6 @@ class WeatherUtils {
     return "$uvIndex ($level)";
   }
 
-  /// Get air quality description
   static String getAirQualityDescription(dynamic aqi) {
     if (aqi == null) return "N/A";
 

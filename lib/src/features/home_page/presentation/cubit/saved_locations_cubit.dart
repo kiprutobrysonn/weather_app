@@ -34,7 +34,6 @@ class SavedLocationsCubit extends Cubit<SavedLocationsState> {
       if (state is SavedLocationsLoaded) {
         final currentLocations = (state as SavedLocationsLoaded).locations;
 
-        // Check if location already exists
         final exists = currentLocations.any(
           (loc) =>
               loc.latitude == location.latitude &&
@@ -42,7 +41,6 @@ class SavedLocationsCubit extends Cubit<SavedLocationsState> {
         );
 
         if (!exists) {
-          // Get full location details with geocoding
           final locationToSave = await _performReverseGeocoding(
             location.latitude,
             location.longitude,
@@ -81,7 +79,6 @@ class SavedLocationsCubit extends Cubit<SavedLocationsState> {
     }
   }
 
-  // Helper methods
   Future<SavedLocation> _performReverseGeocoding(
     double latitude,
     double longitude, {

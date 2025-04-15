@@ -63,11 +63,25 @@ class _HomePageState extends State<HomePage> {
 
                       final savedLocationsCubit =
                           context.read<SavedLocationsCubit>();
+                      final homeBloc = context.read<HomeBloc>();
 
                       if (state.locationDetails?.isSaved ?? false) {
                         savedLocationsCubit.deleteLocation(
                           state.locationDetails!,
                         );
+
+                        final updatedLocation = SavedLocation(
+                          latitude: state.locationDetails!.latitude,
+                          longitude: state.locationDetails!.longitude,
+                          name: state.locationDetails!.name,
+                          country: state.locationDetails!.country,
+                          isSaved: false,
+                        );
+
+                        homeBloc.add(
+                          UpdateWeatherByLocationEvent(updatedLocation),
+                        );
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Location removed'),
@@ -82,8 +96,13 @@ class _HomePageState extends State<HomePage> {
                         longitude: state.position.longitude,
                         name: state.weatherData['name'] ?? "",
                         country: state.weatherData['country'] ?? "",
+                        isSaved: true,
                       );
+
                       savedLocationsCubit.saveLocation(location);
+
+                      homeBloc.add(UpdateWeatherByLocationEvent(location));
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Location saved'),

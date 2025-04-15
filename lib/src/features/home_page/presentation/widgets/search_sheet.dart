@@ -70,7 +70,6 @@ class SearchSheet extends HookWidget {
                             icon: const Icon(Icons.clear),
                             onPressed: () {
                               searchController.clear();
-                              // Clear search results
                               context.read<LocationSearchCubit>().clearSearch();
                             },
                           )
