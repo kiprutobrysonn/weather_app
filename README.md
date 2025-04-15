@@ -46,7 +46,7 @@ This app follows a clean architecture approach with:
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/yourusername/weather_app.git
+   git clone https://github.com/
    cd weather_app
    ```
 
