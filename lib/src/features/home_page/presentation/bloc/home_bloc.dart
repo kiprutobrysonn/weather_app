@@ -33,6 +33,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     double latitude,
     double longitude, {
     bool isSaved = false,
+    bool isHome = false,
   }) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -56,6 +57,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         name: name,
         country: placemarks.isNotEmpty ? placemarks[0].country : null,
         isSaved: isSaved,
+        isHome: isHome,
       );
     } catch (e) {
       print('Error in reverse geocoding: ${e.toString()}');
@@ -99,6 +101,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final locationInfo = await _performReverseGeocoding(
           position.latitude,
           position.longitude,
+          isSaved: true,
+          isHome: true,
         );
         await _fetchWeatherData(position, locationInfo, emit);
         await _saveLastViewedLocation(locationInfo);

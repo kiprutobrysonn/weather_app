@@ -42,108 +42,119 @@ class _HomePageState extends State<HomePage> {
     return MultiBlocProvider(
       providers: [BlocProvider(create: (context) => SavedLocationsCubit())],
       child: Scaffold(
-        floatingActionButton: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
+        floatingActionButton: BlocListener<HomeBloc, HomeState>(
+          listener: (context, state) {
             if (state is HomeLoaded) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FloatingActionButton(
-                    heroTag: "saveLocation",
-                    onPressed: () {
-                      if (state.locationDetails == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('No location to save'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
-                      final savedLocationsCubit =
-                          context.read<SavedLocationsCubit>();
-                      final homeBloc = context.read<HomeBloc>();
-
-                      if (state.locationDetails?.isSaved ?? false) {
-                        savedLocationsCubit.deleteLocation(
-                          state.locationDetails!,
-                        );
-
-                        final updatedLocation = SavedLocation(
-                          latitude: state.locationDetails!.latitude,
-                          longitude: state.locationDetails!.longitude,
-                          name: state.locationDetails!.name,
-                          country: state.locationDetails!.country,
-                          isSaved: false,
-                        );
-
-                        homeBloc.add(
-                          UpdateWeatherByLocationEvent(updatedLocation),
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Location removed'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
-                      final location = SavedLocation(
-                        latitude: state.position.latitude,
-                        longitude: state.position.longitude,
-                        name: state.weatherData['name'] ?? "",
-                        country: state.weatherData['country'] ?? "",
-                        isSaved: true,
-                      );
-
-                      savedLocationsCubit.saveLocation(location);
-
-                      homeBloc.add(UpdateWeatherByLocationEvent(location));
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Location saved'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    },
-                    backgroundColor: Colors.amber,
-                    child:
-                        state.locationDetails?.isSaved ?? false
-                            ? Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.delete),
-                                Text('Remove'),
-                              ],
-                            )
-                            : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [Icon(Icons.save), Text('Add')],
-                            ),
-                  ),
-                  const SizedBox(height: 16),
-                  FloatingActionButton(
-                    heroTag: "showSavedLocations",
-                    onPressed: () {
-                      _showSavedLocations(context);
-                    },
-                    child: const Icon(Icons.list),
-                  ),
-                ],
-              );
+              if (state.locationDetails!.isHome) {
+                final savedLocationsCubit = context.read<SavedLocationsCubit>();
+                savedLocationsCubit.saveLocation(state.locationDetails!);
+              }
             }
-
-            return FloatingActionButton(
-              onPressed: () {
-                _showSavedLocations(context);
-              },
-              child: const Icon(Icons.list),
-            );
           },
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              if (state is HomeLoaded) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton(
+                      heroTag: "saveLocation",
+                      onPressed: () {
+                        if (state.locationDetails == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No location to save'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final savedLocationsCubit =
+                            context.read<SavedLocationsCubit>();
+                        final homeBloc = context.read<HomeBloc>();
+
+                        if (state.locationDetails!.isSaved &&
+                            state.locationDetails!.isHome) {
+                          savedLocationsCubit.deleteLocation(
+                            state.locationDetails!,
+                          );
+
+                          final updatedLocation = SavedLocation(
+                            latitude: state.locationDetails!.latitude,
+                            longitude: state.locationDetails!.longitude,
+                            name: state.locationDetails!.name,
+                            country: state.locationDetails!.country,
+                            isSaved: false,
+                          );
+
+                          homeBloc.add(
+                            UpdateWeatherByLocationEvent(updatedLocation),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Location removed'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final location = SavedLocation(
+                          latitude: state.position.latitude,
+                          longitude: state.position.longitude,
+                          name: state.weatherData['name'] ?? "",
+                          country: state.weatherData['country'] ?? "",
+                          isSaved: true,
+                        );
+
+                        savedLocationsCubit.saveLocation(location);
+
+                        homeBloc.add(UpdateWeatherByLocationEvent(location));
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Location saved'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                      backgroundColor: Colors.amber,
+                      child:
+                          state.locationDetails?.isSaved ?? false
+                              ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(Icons.delete),
+                                  Text('Remove'),
+                                ],
+                              )
+                              : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [Icon(Icons.save), Text('Add')],
+                              ),
+                    ),
+                    const SizedBox(height: 16),
+                    FloatingActionButton(
+                      heroTag: "showSavedLocations",
+                      onPressed: () {
+                        _showSavedLocations(context);
+                      },
+                      child: const Icon(Icons.list),
+                    ),
+                  ],
+                );
+              }
+
+              return FloatingActionButton(
+                onPressed: () {
+                  _showSavedLocations(context);
+                },
+                child: const Icon(Icons.list),
+              );
+            },
+          ),
         ),
         body: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, settingsState) {
