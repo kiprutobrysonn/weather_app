@@ -74,8 +74,7 @@ class _HomePageState extends State<HomePage> {
                             context.read<SavedLocationsCubit>();
                         final homeBloc = context.read<HomeBloc>();
 
-                        if (state.locationDetails!.isSaved &&
-                            state.locationDetails!.isHome) {
+                        if (state.locationDetails!.isSaved) {
                           savedLocationsCubit.deleteLocation(
                             state.locationDetails!,
                           );
@@ -177,15 +176,51 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  child: SafeArea(
-                    child: ListView(
-                      children: [
-                        _buildSearchBar(isDay),
-                        _currentWeatherSection(),
-                        _weatherDetails(state, isDay),
-                        _foreCastSection(state, isDay),
-                      ],
-                    ),
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        backgroundColor: WeatherUtils.getBackgroundColor(isDay),
+                        pinned: true,
+                        floating: true,
+                        elevation: 0,
+                        title: Text(
+                          "Weather App",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: WeatherUtils.getTextColor(isDay),
+                          ),
+                        ),
+
+                        actions: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.search,
+                              color: WeatherUtils.getTextColor(isDay),
+                            ),
+                            onPressed: () {
+                              _showSearchSheet(context);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.settings,
+                              color: WeatherUtils.getTextColor(isDay),
+                            ),
+                            onPressed: () {
+                              _navigateToSettings();
+                            },
+                          ),
+                        ],
+                      ),
+                      SliverList(
+                        delegate: SliverChildListDelegate([
+                          _currentWeatherSection(),
+                          _weatherDetails(state, isDay),
+                          _foreCastSection(state, isDay),
+                        ]),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -222,38 +257,6 @@ class _HomePageState extends State<HomePage> {
     if (location != null && location is SavedLocation && mounted) {
       context.read<HomeBloc>().add(UpdateWeatherByLocationEvent(location));
     }
-  }
-
-  Widget _buildSearchBar(bool isDay) {
-    return Row(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Weather App",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: WeatherUtils.getTextColor(isDay),
-              ),
-            ),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.search, color: WeatherUtils.getTextColor(isDay)),
-          onPressed: () {
-            _showSearchSheet(context);
-          },
-        ),
-        IconButton(
-          icon: Icon(Icons.settings, color: WeatherUtils.getTextColor(isDay)),
-          onPressed: () {
-            _navigateToSettings();
-          },
-        ),
-      ],
-    );
   }
 
   void _navigateToSettings() async {
@@ -305,43 +308,40 @@ class _HomePageState extends State<HomePage> {
 
   Widget _foreCastSection(HomeState state, bool isDay) {
     if (state is HomeLoaded && state.forecast != null) {
-      return Expanded(
-        child: ForecastWidget(forecast: state.forecast!, isDay: isDay),
-      );
+      return ForecastWidget(forecast: state.forecast!, isDay: isDay);
     } else if (state is ForecastLoading) {
-      return Expanded(
-        child: Center(
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
           child: CircularProgressIndicator(
             color: WeatherUtils.getTextColor(isDay),
           ),
         ),
       );
     } else if (state is ForecastError) {
-      return Expanded(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.cloud_off,
-                  color: WeatherUtils.getTextColor(isDay),
-                  size: 48,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Could not load forecast',
-                  style: TextStyle(color: WeatherUtils.getTextColor(isDay)),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<HomeBloc>().add(GetForecastEvent());
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.cloud_off,
+                color: WeatherUtils.getTextColor(isDay),
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Could not load forecast',
+                style: TextStyle(color: WeatherUtils.getTextColor(isDay)),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<HomeBloc>().add(GetForecastEvent());
+                },
+                child: const Text('Retry'),
+              ),
+            ],
           ),
         ),
       );
